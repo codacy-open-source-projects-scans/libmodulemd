@@ -1,0 +1,26 @@
+FROM __IMAGE__
+
+MAINTAINER Tomasz Paweł Gajc <tpgxyz@gmail.com>
+
+RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags='' install \
+    clang \
+    clang-analyzer \
+    cmake \
+    jq \
+    meson \
+    ninja \
+    rpmdevtools \
+    sudo \
+    valgrind \
+    wget \
+    task-devel \
+    'pkgconfig(glib-2.0)' \
+    'pkgconfig(gobject-introspection-1.0)' \
+    'pkgconfig(rpm)' \
+    'pkgconfig(yaml-0.1)' \
+    'python3dist(autopep8)' \
+    'python3dist(pygobject)' \
+    git-core \
+    && dnf -y clean all
+
+RUN ln -sf /builddir/bindings/python/gi/overrides/Modulemd.py $(python3 -c "import gi; import os; os.makedirs(gi._overridesdir, exist_ok=True); print(gi._overridesdir)")/Modulemd.py

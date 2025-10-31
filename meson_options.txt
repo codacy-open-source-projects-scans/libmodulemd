@@ -1,0 +1,51 @@
+# This file is part of libmodulemd
+# Copyright (C) 2017-2018 Stephen Gallagher
+#
+# Fedora-License-Identifier: MIT
+# SPDX-2.0-License-Identifier: MIT
+# SPDX-3.0-License-Identifier: MIT
+#
+# This program is free software.
+# For more information on the license, see COPYING.
+# For more information on free software, see <https://www.gnu.org/philosophy/free-sw.en.html>.
+#
+# REMEMBER TO UPDATE THE SUMMARY() IN meson.build when adding options here
+
+option('accept_overflowed_buildorder', type : 'boolean', value: false,
+       description : 'Accept overflowed 18446744073709551615 buildorder as -1. This breaks a specification, but some RHEL 8 module builds look like that.')
+
+option('verbose_tests', type : 'boolean', value : true,
+       description : 'Tests that are run under the "debug" configuration will print all debug messages. Disable this option for valgrind checks, as it speeds it up substantially.')
+
+option('libmagic', type : 'feature', value : 'auto',
+       description : 'This option is ignored and will be removed in the future.')
+
+option('python_name', type : 'string',
+       description : 'The name of the Python 3 interpreter to use for generating Python bindings and running tests. If left blank, it defaults to the version of Python 3 being used to run meson.')
+
+option('rpmio', type : 'feature', value : 'enabled',
+       description : 'Use the rpmio library to automatically decompress gzip, bzip2 and xz YAML streams.')
+
+option('skip_introspection', type : 'boolean', value : false,
+       description : 'Do not generate GObject Introspection data.')
+
+option('test_installed_lib', type : 'boolean', value : false,
+       description : 'Build only the test suite and run it against a copy of libmodulemd installed on the local system.')
+
+option('with_docs', type : 'boolean', value : true,
+       description : 'Build API documentation.')
+
+option('with_manpages', type : 'feature', value : 'auto',
+       description : 'Build manual pages for included executables.')
+
+option('with_py2', type : 'boolean', value : false,
+       description : 'Build Python 2 language bindings and run Python 2 tests.')
+
+option('with_py3', type : 'boolean', value : true,
+       description : 'Build Python 3 language bindings and run Python 3 tests.')
+
+option('gobject_overrides_dir_py2', type : 'string',
+       description : 'Path to Python 2 PyGObject overrides directory. Leave empty to determine it automatically.')
+
+option('gobject_overrides_dir_py3', type : 'string',
+       description : 'Path to Python 3 PyGObject overrides directory. Leave empty to determine it automatically.')

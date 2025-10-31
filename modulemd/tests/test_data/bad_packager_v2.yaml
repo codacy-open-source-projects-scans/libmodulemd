@@ -1,0 +1,9 @@
+---
+document: modulemd-packager
+version: 2
+data:
+  summary: Trivial Summary
+  description: >-
+    Trivial Description
+  #license: a missing license breaks validity
+...

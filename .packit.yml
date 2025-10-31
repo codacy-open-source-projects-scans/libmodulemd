@@ -1,0 +1,30 @@
+specfile_path: fedora/libmodulemd.spec
+upstream_package_name: libmodulemd
+upstream_project_url: https://github.com/fedora-modularity/libmodulemd
+downstream_package_name: libmodulemd
+
+actions:
+  get-current-version: ./get_version.sh
+
+files_to_sync:
+  - fedora/
+  - .packit.yaml
+
+jobs:
+- job: sync_from_downstream
+  trigger: commit
+
+- job: copr_build
+  trigger: pull_request
+  metadata:
+    targets:
+    - fedora-all
+    - fedora-rawhide-aarch64
+    - fedora-rawhide-i386
+    - fedora-rawhide-ppc64le
+    # fedora-rawhide-x86_64 is included in fedora-all
+    # fedora-rawhide-s390x has too long wait queue
+    - epel-7
+    - epel-8
+    - centos-stream-9
+    - centos-stream-10

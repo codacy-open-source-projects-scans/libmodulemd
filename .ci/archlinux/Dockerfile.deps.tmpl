@@ -1,0 +1,19 @@
+FROM __IMAGE__
+
+MAINTAINER Stephen Gallagher <sgallagh@redhat.com>
+
+RUN pacman -Syu --needed --noconfirm \
+    base-devel \
+    glib2 \
+    glib2-devel \
+    glib2-docs \
+    gobject-introspection \
+    gtk-doc \
+    jq \
+    libyaml \
+    meson \
+    python-gobject \
+    python-six \
+&& pacman -Scc --noconfirm
+
+RUN ln -sf /builddir/bindings/python/gi/overrides/Modulemd.py $(python3 -c "import gi; import os; os.makedirs(gi._overridesdir, exist_ok=True); print(gi._overridesdir)")/Modulemd.py

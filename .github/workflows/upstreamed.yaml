@@ -1,0 +1,54 @@
+name: Upstreamed
+on:
+  push:
+    branches:
+      - main
+jobs:
+  static_analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    if: github.repository == 'fedora-modularity/libmodulemd'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Coverity Scan
+        env:
+          COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_TOKEN }}
+        run: |
+          ./.ci/ci-coverity.sh
+
+  docs:
+    name: Publish Documentation
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    if: github.repository == 'fedora-modularity/libmodulemd'
+    steps:
+      - name: Checkout code repo
+        uses: actions/checkout@v4
+
+      - name: Checkout documentation repo
+        uses: actions/checkout@v4
+        with:
+          repository: fedora-modularity/fedora-modularity.github.io
+          ref: main
+          path: fedora-modularity.github.io
+          token: ${{ secrets.DOC_TOKEN }}
+
+
+      - name: Generate documentation
+        run: |
+          ./.ci/ci-docs.sh
+
+      - name: Commit documentation
+        uses: EndBug/add-and-commit@v9
+        with:
+          new_branch: main
+          github_token: ${{ secrets.DOC_TOKEN }}
+          cwd: fedora-modularity.github.io
+          author_name: Libmodulemd CI
+          author_email: github-actions@github.com
+          message: Updating libmodulemd docs for ${{ github.sha }}
+          add: libmodulemd/latest
+          commit: --signoff
+          push: true
