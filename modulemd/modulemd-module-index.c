@@ -1289,6 +1289,16 @@ modulemd_module_index_add_obsoletes (ModulemdModuleIndex *self,
   g_return_val_if_fail (MODULEMD_IS_MODULE_INDEX (self), FALSE);
   g_return_val_if_fail (MODULEMD_IS_OBSOLETES (obsoletes), FALSE);
 
+  if (!modulemd_obsoletes_get_module_name (obsoletes))
+    {
+      g_set_error (error,
+                   MODULEMD_ERROR,
+                   MMD_ERROR_MISSING_REQUIRED,
+                   "The obsoletes requries a module name when adding to "
+                   "ModuleIndex.");
+      return FALSE;
+    }
+
   modulemd_module_add_obsoletes (
     get_or_create_module (self,
                           modulemd_obsoletes_get_module_name (obsoletes)),
@@ -1427,9 +1437,30 @@ modulemd_module_index_upgrade_defaults (ModulemdModuleIndex *self,
 gboolean
 modulemd_module_index_add_translation (ModulemdModuleIndex *self,
                                        ModulemdTranslation *translation,
-                                       GError **UNUSED (error))
+                                       GError **error)
 {
   g_return_val_if_fail (MODULEMD_IS_MODULE_INDEX (self), FALSE);
+  g_return_val_if_fail (MODULEMD_IS_TRANSLATION (translation), FALSE);
+
+  if (!modulemd_translation_get_module_name (translation))
+    {
+      g_set_error (error,
+                   MODULEMD_ERROR,
+                   MMD_ERROR_MISSING_REQUIRED,
+                   "The translation requries a module name when adding to "
+                   "ModuleIndex.");
+      return FALSE;
+    }
+
+  if (!modulemd_translation_get_module_stream (translation))
+    {
+      g_set_error (error,
+                   MODULEMD_ERROR,
+                   MMD_ERROR_MISSING_REQUIRED,
+                   "The translation requries a module stream when adding to "
+                   "ModuleIndex.");
+      return FALSE;
+    }
 
   modulemd_module_add_translation (
     get_or_create_module (self,
@@ -1519,10 +1550,17 @@ modulemd_module_index_merge (ModulemdModuleIndex *from,
           if (!modulemd_module_index_add_module_stream (
                 into, stream, &nested_error))
             {
-              g_info ("Could not add stream %s due to %s",
-                      nsvca,
-                      nested_error->message);
-              g_clear_error (&nested_error);
+              if (nested_error)
+                {
+                  g_info ("Could not add stream %s due to %s",
+                          nsvca,
+                          nested_error->message);
+                  g_clear_error (&nested_error);
+                }
+              else
+                {
+                  g_info ("Could not add stream %s", nsvca);
+                }
             }
           g_clear_pointer (&nsvca, g_free);
         }
